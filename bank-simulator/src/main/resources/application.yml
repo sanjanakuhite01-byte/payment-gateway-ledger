@@ -1,0 +1,13 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: bank-simulator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

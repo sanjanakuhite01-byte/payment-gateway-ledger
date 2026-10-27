@@ -1,0 +1,16 @@
+# Build output (Maven creates this, never commit it)
+target/
+
+# IDE files (each developer has their own)
+.idea/
+*.iml
+.vscode/
+
+# Secrets and local settings (never commit passwords)
+.env
+application-local.yml
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

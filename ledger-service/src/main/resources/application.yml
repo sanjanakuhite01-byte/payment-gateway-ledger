@@ -1,0 +1,34 @@
+# WHAT: settings of the ledger service
+# WHY: every value that changes between laptop and production comes from an
+#      environment variable. The database user and password have NO default on
+#      purpose: a secret must never be written in code or saved in Git, and the
+#      service should refuse to start if it is missing.
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ledger-service
+  datasource:
+    # Only the address has a safe local default (after the colon).
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ledger_db}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      # validate = only CHECK that tables match the Java classes.
+      # Flyway creates the tables. Never use "update" in production.
+      ddl-auto: validate
+    open-in-view: false   # avoids hidden database calls during the web response
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true      # gives /actuator/health/liveness and /readiness for Kubernetes

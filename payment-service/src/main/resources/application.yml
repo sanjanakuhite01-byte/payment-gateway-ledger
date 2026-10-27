@@ -1,0 +1,36 @@
+# WHAT: settings of the payment service (merchant API and payment flow)
+# WHY: values that change between laptop and production come from environment
+#      variables or a profile file. The database user and password have NO
+#      default on purpose: a secret must never be written in code or saved in Git.
+#      On a laptop, the login comes from application-local.yml (not in Git).
+#      On AWS, it comes from environment variables filled from Secrets Manager.
+server:
+  port: 8083
+
+spring:
+  config:
+    import: optional:classpath:application-local.yml
+  application:
+    name: payment-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/payment_db}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      # validate = only CHECK that tables match the Java classes.
+      # Flyway creates the tables. Never use "update" in production.
+      ddl-auto: validate
+    open-in-view: false   # avoids hidden database calls during the web response
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true      # gives /actuator/health/liveness and /readiness for Kubernetes
